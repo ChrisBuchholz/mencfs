@@ -81,7 +81,7 @@ your just added to your keychain.
 
 ### Usage
 
-Now that your configuration file is set up, you are ready to manager your 
+Now that your configuration file is set up, you are ready to manage your 
 EncFS encrypted folder.
 
 In a terminal, execute
