@@ -72,7 +72,7 @@ in your terminal:
 Add a new password to your keychain using the same password that you used to
 encrypt *~/encrypted_folder*. Remember the label your give it.
 
-Now alter ~/.mencfs so it looks like this:
+Now alter *~/.mencfs* so it looks like this:
 
     ~/encrypted_folder		decrypted		%password_label%
 
