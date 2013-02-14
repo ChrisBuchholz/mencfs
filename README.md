@@ -23,7 +23,7 @@ can read more about installing and setting up Go on your system
 When you are ready to install MEncFS, execute the following command in your
 terminal of choise.
 
-    go get https://github.com/ChrisBuchholz/mencfs
+    go get github.com/ChrisBuchholz/mencfs
 
 That's it. Try to execute `mencfs` in a terminal. If you have set up Go
 correctly, you should see information in your terminal about how to use MEncFS.
@@ -54,7 +54,7 @@ you are running on another platform, you can probably Google it.
 
 Before continuing, make sure you already have an EncFS encrypted folder. If not,
 you can create an encrypted folder by executing the following command. Make
-sure that ~/encrypted_folder is empty before you do this or else the stuff
+sure that *~/encrypted_folder* is empty before you do this or else the stuff
 already inside the folder won't get encrypted.
 
     encfs ~/encrypted_folder ~/decrypted_folder
