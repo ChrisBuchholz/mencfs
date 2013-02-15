@@ -16,7 +16,6 @@ import (
 // that its not a file, and that if it does not exist, creating it
 func ReadyPath(path string) (err error) {
 	var doesNotExist = true
-
 	file, err := os.Open(path)
 	if err == nil {
 		defer file.Close()
@@ -29,14 +28,12 @@ func ReadyPath(path string) (err error) {
 			return errors.New(fmt.Sprintf("%s is not a folder", path))
 		}
 	}
-
 	if doesNotExist {
 		if err = os.Mkdir(path, 0700); err != nil {
 			return errors.New(fmt.Sprintf("Could not create %s", path))
 		}
 		fmt.Println("Created", path)
 	}
-
 	return nil
 }
 
@@ -53,18 +50,18 @@ func Abs(name string) (string, error) {
 		wd, err := os.Getwd()
 		return path.Join(wd, name), err
 	}
-
 	return name, nil
 }
 
+// Copy the content of a directory to another
+// This include hidden (.dot) files
 func CopyDirContent(from string, to string) (err error) {
 	from, _ = Abs(from)
 	to, _ = Abs(to)
+	// make sure that from ends with a slash so that it doesnt copy
+	// the folder but the content of it
 	if from[len(from)-1:len(from)] != "/" {
 		from = from + "/"
-	}
-	if to[len(to)-1:len(to)] == "/" {
-		to = to[0 : len(to)-1]
 	}
 	cp_cmd := fmt.Sprintf("cp -r %s %s", from, to)
 	cmd := exec.Command(GetBash(), "-c", cp_cmd)
@@ -77,12 +74,15 @@ func CopyDirContent(from string, to string) (err error) {
 	return nil
 }
 
+// EmptyDir will empty a dir by deleting every file and folder inside the
+// directory
+// This includes hidden (.dot) files
 func EmptyDir(target string) (err error) {
 	target, _ = Abs(target)
 	if target[len(target)-1:len(target)] != "/" {
 		target = target + "/"
 	}
-	// do not allow deletion of /
+	// do not allow deletion of / or anything in cwd
 	if target != "/" || target != "" {
 		rm_cmd := fmt.Sprintf("rm -rf %s* %s.[!.]*", target, target)
 		cmd := exec.Command(GetBash(), "-c", rm_cmd)
