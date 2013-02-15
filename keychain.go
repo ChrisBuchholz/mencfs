@@ -23,9 +23,7 @@ func GetPassword_mac(label string) string {
 		out      bytes.Buffer
 	)
 
-	// we assume that bash has been installed to /bin/bash
-	// this is stupid and should be done otherwise
-	cmd := exec.Command("/bin/bash", "-c", bash_cmd)
+	cmd := exec.Command(GetBash(), "-c", bash_cmd)
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
 		return ""

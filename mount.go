@@ -10,66 +10,46 @@ import (
 )
 
 func mountTarget(source string, target string, title string, keychain_label string) (err error) {
+	source, _ = Abs(source)
+	target, _ = Abs(target)
+
 	var (
-		doesNotExist bool = true
 		// get the password to decrypt the volume
 		// if no password is found, keychain_password will be empty which
 		// will result in encfs decrypting rubbish
 		keychain_password string = GetPassword_mac(keychain_label)
 		// assemble the steps that, via bash, will call encfs and make it
 		// mount the encrypted volume
-		encfs    string = "encfs"
-		extpass  string = fmt.Sprintf("--extpass=\"/bin/bash -c \\\"echo '%s'\\\" \"", keychain_password)
-		rargs    string = fmt.Sprintf("-ovolname=%s -oallow_root -olocal -ohard_remove -oauto_xattr -onolocalcaches", title)
-		bash_cmd string = fmt.Sprintf("%s %s %s %s %s", encfs, source, target, extpass, rargs)
+		encfs_args string = fmt.Sprintf("--extpass=\"%s -c \\\"echo '%s'\\\"\" -ovolname=%s -oallow_root -olocal -ohard_remove -oauto_xattr -onolocalcaches", GetBash(), keychain_password, title)
+		bash_cmd   string = fmt.Sprintf("%s %s %s %s", GetEncFS(), source, target, encfs_args)
 	)
 
-	// find out if the mountpoint already exist and if it does but it
-	// is a file, not a directory, bail
-	file, err := os.Open(target)
-	if err == nil {
-		doesNotExist = false
-		fi, err := file.Stat()
-		if err != nil {
-			return err
-		}
-		if !fi.IsDir() {
-			return errors.New(fmt.Sprintf("Mountpoint %s is not a folder", target))
-		}
+	// if source doesnt exist, why might as well bail
+	_, err = os.Open(source)
+	if err != nil {
+		return errors.New(fmt.Sprintf("No encrypted folder %s", source))
 	}
 
-	// if it doesnt exist, create the mountpoint
-	if doesNotExist {
-		if err = os.Mkdir(target, 0700); err != nil {
-			return errors.New(fmt.Sprintf("Couldn't create target %s", target))
-		}
-		fmt.Println("Created new mountpoint", target)
+	// make sure that target is ready to be used
+	if err := ReadyPath(target); err != nil {
+		return err
 	}
 
 	// tell encfs to decrypt the volume
 	// we do this by telling bash to execute our assembled bash command
-	//
-	// we assume that bash is installed to /bin/bash, this is a bad thing
-	// and should be done otherwise
-	cmd := exec.Command("/bin/bash", "-c", bash_cmd)
+	cmd := exec.Command(GetBash(), "-c", bash_cmd)
 	if err = cmd.Run(); err != nil {
 		return errors.New(fmt.Sprintf("Failed to mount %s", target))
 	}
-	fmt.Println(target, "mounted")
 
 	return nil
 }
 
 func unmountTarget(target string) (err error) {
-	var (
-		out bytes.Buffer
-		// assuming the location of diskutil is bad and locating diskutil
-		// should be done otherwise
-		diskutil string = "/usr/sbin/diskutil"
-	)
+	var out bytes.Buffer
 
 	// mount returns all mounted volumes
-	cmd := exec.Command("mount")
+	cmd := exec.Command(GetMount())
 	cmd.Stdout = &out
 	if err = cmd.Run(); err != nil {
 		return err
@@ -78,11 +58,10 @@ func unmountTarget(target string) (err error) {
 	// we use the output from `mount` to check if out Volume is mounted
 	// and only unmounts it if it has
 	if strings.Contains(out.String(), target) {
-		cmd = exec.Command(diskutil, "unmount", target)
+		cmd = exec.Command(GetUnmount(), "unmount", target)
 		if err = cmd.Run(); err != nil {
 			return errors.New(fmt.Sprintf("Failed to unmount %s", target))
 		}
-		fmt.Println(target, "unmounted")
 	}
 
 	return nil
@@ -98,6 +77,7 @@ func Mount() (err error) {
 		if err != nil {
 			return err
 		}
+		fmt.Println(target, "mounted")
 	}
 
 	return nil
@@ -113,12 +93,13 @@ func UMount() (err error) {
 		if err != nil {
 			return err
 		}
+		fmt.Println(target, "unmounted")
 	}
 
 	return nil
 }
 
 func AutoMount() (err error) {
-	fmt.Println("automount")
+	fmt.Println("automount not implemented yet")
 	return nil
 }

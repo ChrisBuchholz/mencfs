@@ -53,31 +53,22 @@ is a guide describing how to add a password to your Mac OS X keychain. If
 you are running on another platform, you can probably Google it.
 
 Before continuing, make sure you already have an EncFS encrypted folder. If not,
-you can create an encrypted folder by executing the following command. Make
-sure that *~/encrypted_folder* is empty before you do this or else the stuff
-already inside the folder won't get encrypted.
+you can encrypt a folder with the following command:
 
-    encfs ~/encrypted_folder ~/decrypted_folder
+    mencfs encrypt ~/my_folder
 
-EncFS will ask you for a few questions. Just follow the prompt till it's
+You will get asked a few questions. Just follow the prompt till it's
 done. 
 
-The two folders are now synced and if you put stuff inside *~/decrypted_folder*
-, it will get encrypted and put inside *~/encrypted_folder*. Now unmount
-*~/decrypted_folder*. On Mac OS X, this can be done by executing this command
-in your terminal:
-
-    umount ~/decrypted_folder
-
 Add a new password to your keychain using the same password that you used to
-encrypt *~/encrypted_folder*. Remember the label your give it.
+encrypt *~/my_folder* in the previous step. Remember the label your give it.
 
 Now alter *~/.mencfs* so it looks like this:
 
-    ~/encrypted_folder		decrypted		%password_label%
+    ~/my_folder		my_folder		%password_label%
 
 Ensure that *%password_label%* is the same label that you gave the password
-your just added to your keychain.
+you just added to your keychain.
 
 ### Usage
 
@@ -88,7 +79,7 @@ In a terminal, execute
 
     mencfs mount
 
-This will, on Mac OS X, mount *~/encrypted_folder* to */Volumes/decrypted*. It
+This will, on Mac OS X, mount *~/my_folder* to */Volumes/my_folder*. It
 should pop up in the sidebar in Finder, ready for you to put secret stuff in.
 
 To unmount the decrypted folder again, type the following in a terminal

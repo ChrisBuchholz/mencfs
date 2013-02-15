@@ -14,10 +14,11 @@ const (
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "%s - %s %s\n\n", NAME, DESCRIPTION, VERSION)
-	fmt.Fprintf(os.Stderr, "usage: %s [arguments ..] [action]\n\n", NAME)
+	fmt.Fprintf(os.Stderr, "usage: %s [arguments ..] [action] [path ..]\n\n", NAME)
 	fmt.Fprintf(os.Stderr, "arguments:\n")
 	fmt.Fprintf(os.Stderr, "  --force\tForce action\n")
 	fmt.Fprintf(os.Stderr, "\nactions:\n")
+	fmt.Fprintf(os.Stderr, "  encrypt\tEncrypt a folder\n")
 	fmt.Fprintf(os.Stderr, "  mount\t\tMount Volumes as defined in the config file\n")
 	fmt.Fprintf(os.Stderr, "  umount\tUnmount Volumes defined in the config file\n")
 	fmt.Fprintf(os.Stderr, "  generate\tGenerate config file %s\n", GetConfigFilePath())
@@ -41,6 +42,9 @@ func main() {
 	}
 
 	switch action {
+	case "encrypt":
+		rest_args := args[1:]
+		err = Encrypt(rest_args)
 	case "generate":
 		err = GenerateConfig(*force)
 	case "mount":
