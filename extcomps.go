@@ -38,11 +38,3 @@ func GetEncFS() string {
 	}
 	return exe
 }
-
-func GetSecurity() string {
-	exe, err := exec.LookPath("security")
-	if err != nil {
-		log.Fatal("Looks like you don't have security installed correctly...")
-	}
-	return exe
-}
