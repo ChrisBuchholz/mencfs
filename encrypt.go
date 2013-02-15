@@ -14,14 +14,16 @@ func Encrypt(args []string) (err error) {
 	}
 
 	for _, path := range args {
+		// get absolute path
 		aPath, _ := Abs(path)
 
 		var (
+			tmp                 string = os.TempDir()
+			tmp_mount_location  string = fmt.Sprintf("%smencfs%d", tmp, time.Now().Nanosecond())
+			tmp_backup_location string = fmt.Sprintf("%smencfs%d", tmp, time.Now().Nanosecond())
 			// assemble the steps that, via bash, will call encfs and make it
 			// mount the encrypted volume
-			tmp_mount_location  string = fmt.Sprintf("/tmp/mencfs%d", time.Now().Nanosecond())
-			tmp_backup_location string = fmt.Sprintf("/tmp/mencfs%d", time.Now().Nanosecond())
-			bash_cmd            string = fmt.Sprintf("encfs %s %s", aPath, tmp_mount_location)
+			bash_cmd string = fmt.Sprintf("encfs %s %s", aPath, tmp_mount_location)
 		)
 
 		// create the temporary mount and backup locations
@@ -55,18 +57,23 @@ func Encrypt(args []string) (err error) {
 				cmd.Stdout = os.Stdout
 				if err = cmd.Run(); err != nil {
 					fmt.Println("Failed to encrypt", aPath)
+					// recover content from backup
+					if err = CopyDirContent(tmp_backup_location, aPath); err != nil {
+						fmt.Println("Failed to recover existing content of", aPath, " - it's available in", tmp_backup_location)
+					}
+				} else {
+					fmt.Printf("\n%s has been encrypted\n", aPath)
+					fmt.Println("Add a new entry to your configuration file to be able to manage it with MEncFS")
+
+					if err = CopyDirContent(tmp_backup_location, tmp_mount_location); err != nil {
+						fmt.Println("Failed to recover existing content of", aPath, " - it's available in", tmp_backup_location)
+					}
+
+					if err = unmountTarget(tmp_mount_location); err != nil {
+						fmt.Println(err)
+					}
 				}
 
-				fmt.Printf("\n%s has been encrypted\n", aPath)
-				fmt.Println("Add a new entry to your configuration file to be able to manage it with MEncFS")
-
-				if err = CopyDirContent(tmp_backup_location, tmp_mount_location); err != nil {
-					fmt.Println("Failed to recover existing content of", aPath, " - it's available in", tmp_backup_location)
-				}
-
-				if err = unmountTarget(tmp_mount_location); err != nil {
-					fmt.Println(err)
-				}
 			}
 		}
 	}
