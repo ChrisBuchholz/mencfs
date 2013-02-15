@@ -67,8 +67,9 @@ Now alter *~/.mencfs* so it looks like this:
 
     ~/my_folder		my_folder		%password_label%
 
-Ensure that *%password_label%* is the same label that you gave the password
-you just added to your keychain.
+Ensure that *~/my_folder* points to your encrypted folder and that
+*%password_label%* is the same label that you gave the password you just added
+to your keychain. **A faulty config can cause unexpected behavior.**
 
 ### Usage
 
