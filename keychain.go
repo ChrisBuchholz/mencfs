@@ -22,12 +22,12 @@ func GetPassword_mac(label string) string {
 		bash_cmd string = fmt.Sprintf("security 2>&1 >/dev/null find-generic-password -gl '%s' |grep password|cut -d \\\" -f 2", label)
 		out      bytes.Buffer
 	)
-
-	cmd := exec.Command(GetBash(), "-c", bash_cmd)
+	// we assume that bash has been installed to /bin/bash
+	// this is stupid and should be done otherwise
+	cmd := exec.Command("/bin/bash", "-c", bash_cmd)
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
 		return ""
 	}
-
 	return strings.TrimSpace(out.String())
 }

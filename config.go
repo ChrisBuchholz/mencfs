@@ -39,7 +39,7 @@ func parseConfigLine(line string) (Volume, error) {
 		volume Volume
 	)
 
-	r := regexp.MustCompile(`[a-zA-Z0-9_\-\/~]+`)
+	r := regexp.MustCompile(`[a-zA-Z0-9_\/~]+`)
 	matches := r.FindAllStringSubmatch(line, -1)
 
 	for _, match := range matches {
