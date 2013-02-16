@@ -32,6 +32,8 @@ func main() {
 		err    error  = nil
 	)
 
+	Greete()
+
 	force := flag.Bool("force", false, "Force action")
 	flag.Usage = usage
 	flag.Parse()
