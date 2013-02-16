@@ -12,11 +12,9 @@ func Encrypt(args []string) (err error) {
 	if len(args) == 0 {
 		return errors.New("No encryption path specified")
 	}
-
 	for _, path := range args {
 		// get absolute path
 		aPath, _ := Abs(path)
-
 		var (
 			tmp                 string = os.TempDir()
 			tmp_mount_location  string = fmt.Sprintf("%smencfs%d", tmp, time.Now().Nanosecond())
@@ -25,7 +23,6 @@ func Encrypt(args []string) (err error) {
 			// mount the encrypted volume
 			bash_cmd string = fmt.Sprintf("encfs %s %s", aPath, tmp_mount_location)
 		)
-
 		// create the temporary mount and backup locations
 		if err = os.Mkdir(tmp_mount_location, 0700); err != nil {
 			fmt.Printf("Could not create %s", path)
@@ -33,7 +30,6 @@ func Encrypt(args []string) (err error) {
 		if err = os.Mkdir(tmp_backup_location, 0700); err != nil {
 			fmt.Printf("Could not create %s", path)
 		}
-
 		// make sure that aPath is ready to be used
 		if err = ReadyPath(aPath); err != nil {
 			fmt.Println(err)
@@ -49,7 +45,6 @@ func Encrypt(args []string) (err error) {
 					fmt.Println("Failed to empty", aPath, "before encryption")
 				}
 			}
-
 			if doEncrypt {
 				cmd := exec.Command(GetBash(), "-c", bash_cmd)
 				cmd.Stderr = os.Stderr
@@ -64,11 +59,8 @@ func Encrypt(args []string) (err error) {
 				} else {
 					fmt.Printf("\n%s has been encrypted\n", aPath)
 					fmt.Println("Add a new entry to your configuration file to be able to manage it with MEncFS")
-
 					if err = CopyDirContent(tmp_backup_location, tmp_mount_location); err != nil {
 						fmt.Println("Failed to recover existing content of", aPath, " - it's available in", tmp_backup_location)
-					}
-
 					if err = unmountTarget(tmp_mount_location); err != nil {
 						fmt.Println(err)
 					}
@@ -77,6 +69,5 @@ func Encrypt(args []string) (err error) {
 			}
 		}
 	}
-
 	return nil
 }

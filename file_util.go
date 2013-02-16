@@ -16,7 +16,6 @@ import (
 // that its not a file, and that if it does not exist, creating it
 func ReadyPath(path string) (err error) {
 	var doesNotExist = true
-
 	file, err := os.Open(path)
 	if err == nil {
 		defer file.Close()
@@ -29,14 +28,12 @@ func ReadyPath(path string) (err error) {
 			return errors.New(fmt.Sprintf("%s is not a folder", path))
 		}
 	}
-
 	if doesNotExist {
 		if err = os.Mkdir(path, 0700); err != nil {
 			return errors.New(fmt.Sprintf("Could not create %s", path))
 		}
 		fmt.Println("Created", path)
 	}
-
 	return nil
 }
 
@@ -53,7 +50,6 @@ func Abs(name string) (string, error) {
 		wd, err := os.Getwd()
 		return path.Join(wd, name), err
 	}
-
 	return name, nil
 }
 

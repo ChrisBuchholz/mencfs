@@ -24,6 +24,11 @@ func GetPassword(label string) string {
 		bash_cmd string = fmt.Sprintf("security 2>&1 >/dev/null find-generic-password -gl '%s' |grep password|cut -d \\\" -f 2", label)
 		out      bytes.Buffer
 	)
+<<<<<<< HEAD:keychain_linux.go
+=======
+	// we assume that bash has been installed to /bin/bash
+	// this is stupid and should be done otherwise
+>>>>>>> master:keychain.go
 	cmd := exec.Command("/bin/bash", "-c", bash_cmd)
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
