@@ -1,9 +1,9 @@
-// +build darwin
+// +build darwin !linux
 
 package main
 
 import "fmt"
 
 func Greete() {
-	fmt.Println("Greete linux")
+	fmt.Println("Greete darwin")
 }
