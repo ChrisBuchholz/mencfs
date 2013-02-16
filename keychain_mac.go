@@ -2,6 +2,8 @@
 // implementation of how to get a Volume's encryption password, using
 // the platforms standard keychain-protocol
 
+// +build darwin !linux
+
 package main
 
 import (
@@ -13,7 +15,7 @@ import (
 
 // get the Volume's encryption password from Mac OS Xs keychain, using the
 // label the Volume has defined in the config file
-func GetPassword_mac(label string) string {
+func GetPassword(label string) string {
 	var (
 		// this elaborate bash command will look up the Volume's encryption
 		// password via the label
@@ -22,8 +24,6 @@ func GetPassword_mac(label string) string {
 		bash_cmd string = fmt.Sprintf("security 2>&1 >/dev/null find-generic-password -gl '%s' |grep password|cut -d \\\" -f 2", label)
 		out      bytes.Buffer
 	)
-	// we assume that bash has been installed to /bin/bash
-	// this is stupid and should be done otherwise
 	cmd := exec.Command("/bin/bash", "-c", bash_cmd)
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
