@@ -12,8 +12,8 @@ import (
 	"regexp"
 )
 
-// define the mount point (directory) of volumes
 const VOLUME_MOUNT_POINT string = "/Volumes/"
+const CONFIG_NAME string = "/.mencfs"
 
 type Volume struct {
 	Source        string
@@ -28,7 +28,7 @@ func GetConfigFilePath() string {
 	if err != nil {
 		return ""
 	}
-	return u.HomeDir + "/.mencfs"
+	return u.HomeDir + CONFIG_NAME
 }
 
 // Parse a config file line, which is a tab-seperated list of
