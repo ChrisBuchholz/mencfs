@@ -61,11 +61,11 @@ func Encrypt(args []string) (err error) {
 					fmt.Println("Add a new entry to your configuration file to be able to manage it with MEncFS")
 					if err = CopyDirContent(tmp_backup_location, tmp_mount_location); err != nil {
 						fmt.Println("Failed to recover existing content of", aPath, " - it's available in", tmp_backup_location)
+					}
 					if err = unmountTarget(tmp_mount_location); err != nil {
 						fmt.Println(err)
 					}
 				}
-
 			}
 		}
 	}
